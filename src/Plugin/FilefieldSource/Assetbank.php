@@ -73,16 +73,9 @@ class Assetbank implements FilefieldSourceInterface {
       '#type' => 'textfield',
       '#description' => t('Assetbank image selection process.'),
       '#disabled' => TRUE,
-      '#size' => 80,
-      '#maxlength' => 200,
       '#attributes' => [
         'id' => 'assetbank_url',
       ],
-    ];
-
-    $element['filefield_assetbank']['assetbank_host'] = [
-      '#type' => 'hidden',
-      '#value' => 'https://dmam.uwaterloo.ca/asset-bank/action/selectImageForCms',
     ];
 
     $element['filefield_assetbank']['submit'] = [
@@ -95,6 +88,11 @@ class Assetbank implements FilefieldSourceInterface {
       '#attached' => [
         'library' => [
           'filefield_sources_assetbank/assetbank-global',
+        ],
+        'drupalSettings' => [
+          'assetbank' => [
+            'host' => 'https://dmam.uwaterloo.ca/asset-bank/action/selectImageForCms',
+          ],
         ],
       ],
       '#attributes' => [
@@ -113,7 +111,7 @@ class Assetbank implements FilefieldSourceInterface {
 
     $element['assetbank_url']['#field_suffix'] = $renderer->render($element['submit']);
 
-    return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['assetbank_host']) . $renderer->render($element['assetbank_url']) . '</div>';
+    return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['assetbank_url']) . '</div>';
   }
 
 }
