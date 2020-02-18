@@ -75,11 +75,16 @@ class UWAssetbank implements FilefieldSourceInterface {
     $element['filefield_uwassetbank']['url'] = [
       '#type' => 'textfield',
       '#description' => t('UW Assetbank image selection process.'),
+      '#disabled' => TRUE,
     ];
 
     $element['filefield_uwassetbank']['submit'] = [
+      '#name' => implode('_', $element['#parents']) . '_transfer',
       '#type' => 'submit',
-      '#value' => 'Submit',
+      '#value' => 'Browse',
+      '#validate' => [],
+      '#submit' => ['filefield_sources_field_submit'],
+      '#limit_validation_errors' => [$element['#parents']],
     ];
 
 
