@@ -1,30 +1,27 @@
 <?php
 
-namespace Drupal\uw_assetbank\Plugin\FilefieldSource;
+namespace Drupal\filefield_sources_assetbank\Plugin\FilefieldSource;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\filefield_sources\Annotation\FilefieldSource;
 use Drupal\filefield_sources\FilefieldSourceInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 /**
- * Class UWAssetbank
+ * Class Assetbank
  *
- * @package Drupal\uw_assetbank\Plugin\FilefieldSource
+ * @package Drupal\filefield_sources_assetbank\Plugin\FilefieldSource
  *
  * @FilefieldSource(
- *   id = "uwassetbank",
- *   name = @Translation("UW Assetbank file source"),
- *   label = @Translation("UW Assetbank"),
+ *   id = "assetbank",
+ *   name = @Translation("Assetbank file source"),
+ *   label = @Translation("Assetbank"),
  *   description = @Translation("Select a file using Assetbank media."),
  *   weight = 10
  * )
  */
-class UWAssetbank implements FilefieldSourceInterface {
+class Assetbank implements FilefieldSourceInterface {
 //
 //  /** @var \Drupal\Core\Messenger\MessengerInterface  */
 //  protected $messenger;
@@ -64,21 +61,21 @@ class UWAssetbank implements FilefieldSourceInterface {
 
   /** {@inheritDoc} */
   public static function process(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    $element['filefield_uwassetbank'] = [
+    $element['filefield_assetbank'] = [
       '#weight' => 100.5,
       '#theme' => 'filefield_sources_element',
-      '#source_id' => 'uwassetbank',
+      '#source_id' => 'assetbank',
       // Required for proper theming.
       '#filefield_source' => TRUE,
     ];
 
-    $element['filefield_uwassetbank']['url'] = [
+    $element['filefield_assetbank']['url'] = [
       '#type' => 'textfield',
-      '#description' => t('UW Assetbank image selection process.'),
+      '#description' => t('Assetbank image selection process.'),
       '#disabled' => TRUE,
     ];
 
-    $element['filefield_uwassetbank']['submit'] = [
+    $element['filefield_assetbank']['submit'] = [
       '#name' => implode('_', $element['#parents']) . '_transfer',
       '#type' => 'submit',
       '#value' => 'Browse',
@@ -99,7 +96,7 @@ class UWAssetbank implements FilefieldSourceInterface {
 
     $element['url']['#field_suffix'] = $renderer->render($element['submit']);
 
-    return '<div class="filefield-source filefield-source-uwassetbank clear-block">' . $renderer->render($element['url']) . '</div>';
+    return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['url']) . '</div>';
   }
 
 }

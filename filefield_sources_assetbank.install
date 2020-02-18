@@ -2,14 +2,14 @@
 
 /**
  * @file
- * UW Assetbank install
+ * Assetbank install
  */
 
 
 /**
  * Implements hook_install().
  */
-function uw_assetbank_install() {
+function filefield_sources_assetbank_install() {
   try {
     $weight = module_get_weight('fielfield_sources');
     $weight++;
@@ -18,5 +18,5 @@ function uw_assetbank_install() {
     $weight = 5;
   }
 
-  module_set_weight('uw_assetbank', $weight);
+  module_set_weight('filefield_sources_assetbank', $weight);
 }
