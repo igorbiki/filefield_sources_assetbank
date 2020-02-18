@@ -61,6 +61,8 @@ class Assetbank implements FilefieldSourceInterface {
 
   /** {@inheritDoc} */
   public static function process(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    $assetbank_config = ['host' => ''];
+
     $element['filefield_assetbank'] = [
       '#weight' => 101.5,
       '#theme' => 'filefield_sources_element',
@@ -91,7 +93,7 @@ class Assetbank implements FilefieldSourceInterface {
         ],
         'drupalSettings' => [
           'assetbank' => [
-            'host' => 'https://dmam.uwaterloo.ca/asset-bank/action/selectImageForCms',
+            'host' => $assetbank_config['host'],
           ],
         ],
       ],

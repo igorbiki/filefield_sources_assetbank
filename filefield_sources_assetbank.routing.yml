@@ -5,3 +5,11 @@ filefield_sources_assetbank.assetbankcontroller:
     _title: 'Select Image'
   requirements:
     _permission: 'access content'
+
+filefield_sources_assetbank.settings:
+  path: '/admin/config/media/assetbank'
+  defaults:
+    _form: '\Drupal\filefield_sources_assetbank\Form\AssetbankConfigurationForm'
+    _title: 'Assetbank'
+  requirements:
+    _permission: 'administer site configuration'
