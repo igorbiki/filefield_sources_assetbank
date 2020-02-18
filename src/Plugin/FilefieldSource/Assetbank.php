@@ -62,7 +62,7 @@ class Assetbank implements FilefieldSourceInterface {
   /** {@inheritDoc} */
   public static function process(array &$element, FormStateInterface $form_state, array &$complete_form) {
     $element['filefield_assetbank'] = [
-      '#weight' => 100.5,
+      '#weight' => 101.5,
       '#theme' => 'filefield_sources_element',
       '#source_id' => 'assetbank',
       // Required for proper theming.
@@ -82,6 +82,9 @@ class Assetbank implements FilefieldSourceInterface {
       '#validate' => [],
       '#submit' => ['filefield_sources_field_submit'],
       '#limit_validation_errors' => [$element['#parents']],
+      '#attached' => [
+        'library' => 'filefield_sources_assetbank/assetbank-global',
+      ]
     ];
 
     return $element;

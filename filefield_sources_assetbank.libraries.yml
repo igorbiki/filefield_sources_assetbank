@@ -1,0 +1,4 @@
+assetbank-global:
+  version: VERSION
+  js:
+    js/assetbank.js: {}

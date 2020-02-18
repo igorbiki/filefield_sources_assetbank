@@ -2,6 +2,6 @@ name: 'File field sources - Assetbank'
 type: module
 description: 'Assetbank integration for filefield sources'
 core: 8.x
-package: 'Custom'
+package: 'Fields'
 dependencies:
   - filefield_sources
