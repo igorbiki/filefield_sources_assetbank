@@ -4,6 +4,7 @@ namespace Drupal\filefield_sources_assetbank\Plugin\FilefieldSource;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\filefield_sources\Annotation\FilefieldSource;
 use Drupal\filefield_sources\FilefieldSourceInterface;
 
@@ -61,7 +62,9 @@ class Assetbank implements FilefieldSourceInterface {
 
   /** {@inheritDoc} */
   public static function process(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    $assetbank_config = ['host' => ''];
+    /** @var \Drupal\Core\Config\ConfigFactoryInterface $assetbank_config */
+    $assetbank_config = \Drupal::configFactory()->get('filefield_sources_assetbank.settings');
+    $assetbank_host = $assetbank_config->get('assetbank_url');
 
     $element['filefield_assetbank'] = [
       '#weight' => 101.5,
@@ -71,36 +74,51 @@ class Assetbank implements FilefieldSourceInterface {
       '#filefield_source' => TRUE,
     ];
 
-    $element['filefield_assetbank']['assetbank_url'] = [
-      '#type' => 'textfield',
-      '#description' => t('Assetbank image selection process.'),
-      '#disabled' => TRUE,
-      '#attributes' => [
-        'id' => 'assetbank_url',
-      ],
-    ];
+    if (!empty($assetbank_host)) {
 
-    $element['filefield_assetbank']['submit'] = [
-      '#name' => implode('_', $element['#parents']) . '_transfer',
-      '#type' => 'button',
-      '#value' => t('Browse'),
-      '#validate' => [],
-      '#submit' => ['filefield_sources_field_submit'],
-      '#limit_validation_errors' => [$element['#parents']],
-      '#attached' => [
-        'library' => [
-          'filefield_sources_assetbank/assetbank-global',
+      $element['filefield_assetbank']['assetbank_url'] = [
+        '#type' => 'textfield',
+        '#description' => t('Assetbank image selection process.'),
+        '#disabled' => TRUE,
+        '#attributes' => [
+          'id' => 'assetbank_url',
         ],
-        'drupalSettings' => [
-          'assetbank' => [
-            'host' => $assetbank_config['host'],
+      ];
+
+      $element['filefield_assetbank']['submit'] = [
+        '#name' => implode('_', $element['#parents']) . '_transfer',
+        '#type' => 'button',
+        '#value' => t('Browse'),
+        '#validate' => [],
+        '#submit' => ['filefield_sources_field_submit'],
+        '#limit_validation_errors' => [$element['#parents']],
+        '#attached' => [
+          'library' => [
+            'filefield_sources_assetbank/assetbank-global',
+          ],
+          'drupalSettings' => [
+            'assetbank' => [
+              'host' => $assetbank_config->get('assetbank_url'),
+            ],
           ],
         ],
-      ],
-      '#attributes' => [
-        'class' => ['assetbank-selection']
-      ],
-    ];
+        '#attributes' => [
+          'class' => ['assetbank-selection']
+        ],
+      ];
+    }
+    else {
+      $url = Link::createFromRoute(
+        t('configure'),
+        'filefield_sources_assetbank.settings'
+      );
+
+      $element['filefield_assetbank']['assetbank_url'] = [
+        '#markup' => t('Configuration for assetbank missing. Please @conf it before using this feature.', [
+          '@conf' => $url->toString(),
+        ]),
+      ];
+    }
 
     return $element;
   }
@@ -111,7 +129,9 @@ class Assetbank implements FilefieldSourceInterface {
     $renderer = \Drupal::service('renderer');
     $element = $variables['element'];
 
-    $element['assetbank_url']['#field_suffix'] = $renderer->render($element['submit']);
+    if (!empty($element['submit'])) {
+      $element['assetbank_url']['#field_suffix'] = $renderer->render($element['submit']);
+    }
 
     return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['assetbank_url']) . '</div>';
   }
