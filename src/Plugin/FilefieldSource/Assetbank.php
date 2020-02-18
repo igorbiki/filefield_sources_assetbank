@@ -69,22 +69,37 @@ class Assetbank implements FilefieldSourceInterface {
       '#filefield_source' => TRUE,
     ];
 
-    $element['filefield_assetbank']['url'] = [
+    $element['filefield_assetbank']['assetbank_url'] = [
       '#type' => 'textfield',
       '#description' => t('Assetbank image selection process.'),
       '#disabled' => TRUE,
+      '#size' => 80,
+      '#maxlength' => 200,
+      '#attributes' => [
+        'id' => 'assetbank_url',
+      ],
+    ];
+
+    $element['filefield_assetbank']['assetbank_host'] = [
+      '#type' => 'hidden',
+      '#value' => 'https://dmam.uwaterloo.ca/asset-bank/action/selectImageForCms',
     ];
 
     $element['filefield_assetbank']['submit'] = [
       '#name' => implode('_', $element['#parents']) . '_transfer',
-      '#type' => 'submit',
-      '#value' => 'Browse',
+      '#type' => 'button',
+      '#value' => t('Browse'),
       '#validate' => [],
       '#submit' => ['filefield_sources_field_submit'],
       '#limit_validation_errors' => [$element['#parents']],
       '#attached' => [
-        'library' => 'filefield_sources_assetbank/assetbank-global',
-      ]
+        'library' => [
+          'filefield_sources_assetbank/assetbank-global',
+        ],
+      ],
+      '#attributes' => [
+        'class' => ['assetbank-selection']
+      ],
     ];
 
     return $element;
@@ -96,9 +111,9 @@ class Assetbank implements FilefieldSourceInterface {
     $renderer = \Drupal::service('renderer');
     $element = $variables['element'];
 
-    $element['url']['#field_suffix'] = $renderer->render($element['submit']);
+    $element['assetbank_url']['#field_suffix'] = $renderer->render($element['submit']);
 
-    return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['url']) . '</div>';
+    return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['assetbank_host']) . $renderer->render($element['assetbank_url']) . '</div>';
   }
 
 }

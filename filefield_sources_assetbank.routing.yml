@@ -1,0 +1,7 @@
+filefield_sources_assetbank.assetbankcontroller:
+  path: '/select_image'
+  defaults:
+    _controller: '\Drupal\filefield_sources_assetbank\Controller\AssetbankController::selectImage'
+    _title: 'Select Image'
+  requirements:
+    _permission: 'access content'
