@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * UW Assetbank install
+ */
+
+
+/**
+ * Implements hook_install().
+ */
+function uw_assetbank_install() {
+  try {
+    $weight = module_get_weight('fielfield_sources');
+    $weight++;
+  }
+  catch (Exception $e) {
+    $weight = 5;
+  }
+
+  module_set_weight('uw_assetbank', $weight);
+}

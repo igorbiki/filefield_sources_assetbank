@@ -1,0 +1,7 @@
+name: 'UW Assetbank'
+type: module
+description: 'UW Assetbank custom integration'
+core: 8.x
+package: 'Custom'
+dependencies:
+  - filefield_sources
