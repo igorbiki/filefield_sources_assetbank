@@ -84,7 +84,6 @@ class Assetbank implements FilefieldSourceInterface {
       '#limit_validation_errors' => [$element['#parents']],
     ];
 
-
     return $element;
   }
 
