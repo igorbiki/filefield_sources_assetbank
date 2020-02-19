@@ -102,10 +102,17 @@ class Assetbank implements FilefieldSourceInterface {
     if (!empty($assetbank_host)) {
       $element['filefield_assetbank']['assetbank_url'] = [
         '#type' => 'hidden',
-        '#description' => t('Assetbank image selection process.'),
-//        '#disabled' => TRUE,
         '#attributes' => [
           'id' => 'assetbank_url',
+        ],
+      ];
+
+      $element['filefield_assetbank']['assetbank_url_public'] = [
+        '#type' => 'textfield',
+        '#description' => t('Assetbank image selection process.'),
+        '#disabled' => TRUE,
+        '#attributes' => [
+          'id' => 'assetbank_url_public',
         ],
       ];
 
@@ -163,14 +170,15 @@ class Assetbank implements FilefieldSourceInterface {
     $output = '';
 
     if (!empty($element['submit'])) {
-      $output .= $renderer->render($element['submit']);
+      $element['assetbank_url_public']['#field_prefix'] = $renderer->render($element['submit']);
     }
 
     if (!empty($element['transfer'])) {
-      $output .= $renderer->render($element['transfer']);
+      $element['assetbank_url_public']['#field_suffix'] = $renderer->render($element['transfer']);
     }
 
     $output .= $renderer->render($element['assetbank_url']);
+    $output .= $renderer->render($element['assetbank_url_public']);
 
     return '<div class="filefield-source filefield-source-assetbank clear-block">' . $output . '</div>';
   }

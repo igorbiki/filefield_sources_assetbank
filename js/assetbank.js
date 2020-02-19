@@ -14,6 +14,7 @@
         window.open(assetBankUrl, "assetbank", 'width=800,height=1000,location=yes,resizable=no,scrollbars=yes,status=yes,toolbar=no,menubar=no');
         window.addEventListener('message', function (ev) {
           $("#assetbank_url").val(ev.data);
+          $("#assetbank_url_public").val(ev.data);
         });
 
         event.preventDefault();
