@@ -22,9 +22,4 @@ class AssetbankController extends ControllerBase {
     $response->setContent($html);
     return $response;
   }
-
-  public function saveImage($source, $destination) {
-    // https://drupalize.me/blog/201512/speak-http-drupal-httpclient
-    // With source image url, create managed_file, upload it, and pass fid.
-  }
 }

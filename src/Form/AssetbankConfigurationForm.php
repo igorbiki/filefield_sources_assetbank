@@ -58,7 +58,6 @@ class AssetbankConfigurationForm extends ConfigFormBase {
       ->set('assetbank_upload_location', $values['assetbank_upload_location'])
       ->save();
 
-//    $this->messenger()->addStatus($this->t('Assetbank configuration updated.'));
     parent::submitForm($form, $form_state);
   }
 }

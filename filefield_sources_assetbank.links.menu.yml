@@ -1,6 +1,6 @@
 filefield_sources_assetbank.settings:
   title: 'Asset Bank'
-  description: 'Manage settings for site url, title and image upload location'
+  description: 'Manage settings for asset bank source location (host).'
   parent: system.admin_config_media
   route_name: filefield_sources_assetbank.settings
   weight: 100
