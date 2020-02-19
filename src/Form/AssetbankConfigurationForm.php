@@ -40,12 +40,8 @@ class AssetbankConfigurationForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Asset Bank URL'),
       '#default_value' => $config->get('assetbank_url'),
-    );
-
-    $form['assetbank_upload_location'] = array(
-      '#type' => 'textfield',
-      '#title' => $this->t('Image upload location'),
-      '#default_value' => $config->get('assetbank_upload_location'),
+      '#description' => $this->t('Path to assetbank, use format http(s)://{host}/action/selectImageForCms'),
+      '#size' => 100,
     );
 
     return parent::buildForm($form, $form_state);
