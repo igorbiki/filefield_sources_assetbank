@@ -28,8 +28,6 @@ class Assetbank implements FilefieldSourceInterface {
 
   /** {@inheritDoc} */
   public static function value(array &$element, &$input, FormStateInterface $form_state) {
-    $dev = 'stop';
-
     if (!empty($input['filefield_assetbank']['assetbank_url'])
       && strlen($input['filefield_assetbank']['assetbank_url']) > 0
       && UrlHelper::isValid($input['filefield_assetbank']['assetbank_url'])
@@ -41,31 +39,37 @@ class Assetbank implements FilefieldSourceInterface {
 
         try {
           $request = $client->get($url);
-          $status = $request->getStatusCode();
-          $file_contents = $request->getBody()->getContents();
 
-          /** @var \Drupal\Core\File\FileSystem $filesystem */
-          $filesystem = \Drupal::service('file_system');
-          $filename = rawurldecode($filesystem->basename($url));
+          if ($request->getStatusCode() === 200) {
+            $file_contents = $request->getBody()->getContents();
 
-          $field = \Drupal::entityTypeManager()->getStorage('field_config')->load($element['#entity_type'] . '.' . $element['#bundle'] . '.' . $element['#field_name']);
+            /** @var \Drupal\Core\File\FileSystem $filesystem */
+            $filesystem = \Drupal::service('file_system');
+            $filename = rawurldecode($filesystem->basename($url));
 
-          $filename = filefield_sources_clean_filename($filename, $field->getSetting('file_extensions'));
+            $field = \Drupal::entityTypeManager()
+              ->getStorage('field_config')
+              ->load($element['#entity_type'] . '.' . $element['#bundle'] . '.' . $element['#field_name']);
 
-          $filepath = \Drupal::service('file_system')->createFilename($filename, $temp_folder);
+            $filename = filefield_sources_clean_filename($filename,
+            $field->getSetting('file_extensions'));
 
-          if ($file_contents && $fp = @fopen($filepath, 'w')) {
-            fwrite($fp, $file_contents);
-            fclose($fp);
-          }
+            $filepath = \Drupal::service('file_system')
+              ->createFilename($filename, $temp_folder);
 
-          if ($file = filefield_sources_save_file($filepath, $element['#upload_validators'], $element['#upload_location'])) {
-            if (!in_array($file->id(), $input['fids'])) {
-              $input['fids'][] = $file->id();
+            if ($file_contents && $fp = @fopen($filepath, 'w')) {
+              fwrite($fp, $file_contents);
+              fclose($fp);
             }
-          }
 
-          @unlink($filepath);
+            if ($file = filefield_sources_save_file($filepath, $element['#upload_validators'], $element['#upload_location'])) {
+              if (!in_array($file->id(), $input['fids'])) {
+                $input['fids'][] = $file->id();
+              }
+            }
+
+            @unlink($filepath);
+          }
         }
         catch (RequestException $exception) {
           \Drupal::logger('filefield_source_assetbank')->critical($exception->getMessage());
@@ -103,7 +107,6 @@ class Assetbank implements FilefieldSourceInterface {
         '#attributes' => [
           'id' => 'assetbank_url',
         ],
-        '#default_value' => 'http://sparta.uwaterloo.ca/cms/Images/Engineering_5_1_19.jpg',
       ];
 
       $element['filefield_assetbank']['submit'] = [
@@ -134,11 +137,6 @@ class Assetbank implements FilefieldSourceInterface {
           'filefield_sources_field_submit',
         ],
         '#limit_validation_errors' => [$element['#parents']],
-//        '#states' => [
-//          'enabled' => [
-//            ':input[id="assetbank_url"]' => ['filled' => TRUE],
-//          ],
-//        ],
       ];
     }
     else {
@@ -159,7 +157,6 @@ class Assetbank implements FilefieldSourceInterface {
 
   /** {@inheritDoc} */
   public static function element($variables) {
-    // Static call for Drupal service, can't use create/__construct.
     /** @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = \Drupal::service('renderer');
     $element = $variables['element'];
