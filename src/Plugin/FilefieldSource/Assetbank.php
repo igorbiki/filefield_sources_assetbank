@@ -138,7 +138,7 @@ class Assetbank implements FilefieldSourceInterface {
       $element['filefield_assetbank']['transfer'] = [
         '#name' => implode('_', $element['#parents']) . '_transfer',
         '#type' => 'button',
-        '#value' => t('Fetch'),
+        '#value' => t('Save'),
         '#validate' => [],
         '#submit' => [
           'filefield_sources_field_submit',
