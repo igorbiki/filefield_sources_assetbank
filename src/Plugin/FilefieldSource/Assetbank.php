@@ -58,12 +58,13 @@ class Assetbank implements FilefieldSourceInterface {
   /** {@inheritDoc} */
   public static function value(array &$element, &$input, FormStateInterface $form_state) {
 
+    $dev = 'stop';
   }
 
   /** {@inheritDoc} */
   public static function process(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    /** @var \Drupal\Core\Config\ConfigFactoryInterface $assetbank_config */
-    $assetbank_config = \Drupal::configFactory()->get('filefield_sources_assetbank.settings');
+    /** @var \Consolidation\Config\ConfigInterface $assetbank_config */
+    $assetbank_config = \Drupal::config('filefield_sources_assetbank.settings');
     $assetbank_host = $assetbank_config->get('assetbank_url');
 
     $element['filefield_assetbank'] = [
@@ -75,7 +76,6 @@ class Assetbank implements FilefieldSourceInterface {
     ];
 
     if (!empty($assetbank_host)) {
-
       $element['filefield_assetbank']['assetbank_url'] = [
         '#type' => 'textfield',
         '#description' => t('Assetbank image selection process.'),
@@ -90,7 +90,10 @@ class Assetbank implements FilefieldSourceInterface {
         '#type' => 'button',
         '#value' => t('Browse'),
         '#validate' => [],
-        '#submit' => ['filefield_sources_field_submit'],
+        '#submit' => [
+          'filefield_sources_assetbank_field_submit',
+          'filefield_sources_field_submit',
+        ],
         '#limit_validation_errors' => [$element['#parents']],
         '#attached' => [
           'library' => [
