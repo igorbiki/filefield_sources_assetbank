@@ -2,11 +2,13 @@
 
 namespace Drupal\filefield_sources_assetbank\Plugin\FilefieldSource;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\filefield_sources\Annotation\FilefieldSource;
 use Drupal\filefield_sources\FilefieldSourceInterface;
+use GuzzleHttp\Exception\RequestException;
 
 
 /**
@@ -23,9 +25,59 @@ use Drupal\filefield_sources\FilefieldSourceInterface;
  * )
  */
 class Assetbank implements FilefieldSourceInterface {
+
   /** {@inheritDoc} */
   public static function value(array &$element, &$input, FormStateInterface $form_state) {
     $dev = 'stop';
+
+    if (!empty($input['filefield_assetbank']['assetbank_url'])
+      && strlen($input['filefield_assetbank']['assetbank_url']) > 0
+      && UrlHelper::isValid($input['filefield_assetbank']['assetbank_url'])
+    ) {
+      $url = $input['filefield_assetbank']['assetbank_url'];
+
+      if ($temp_folder = \Drupal::service('file_system')->getTempDirectory()) {
+        $client = \Drupal::httpClient();
+
+        try {
+          $request = $client->get($url);
+          $status = $request->getStatusCode();
+          $file_contents = $request->getBody()->getContents();
+
+          /** @var \Drupal\Core\File\FileSystem $filesystem */
+          $filesystem = \Drupal::service('file_system');
+          $filename = rawurldecode($filesystem->basename($url));
+
+          $field = \Drupal::entityTypeManager()->getStorage('field_config')->load($element['#entity_type'] . '.' . $element['#bundle'] . '.' . $element['#field_name']);
+
+          $filename = filefield_sources_clean_filename($filename, $field->getSetting('file_extensions'));
+
+          $filepath = \Drupal::service('file_system')->createFilename($filename, $temp_folder);
+
+          if ($file_contents && $fp = @fopen($filepath, 'w')) {
+            fwrite($fp, $file_contents);
+            fclose($fp);
+          }
+
+          if ($file = filefield_sources_save_file($filepath, $element['#upload_validators'], $element['#upload_location'])) {
+            if (!in_array($file->id(), $input['fids'])) {
+              $input['fids'][] = $file->id();
+            }
+          }
+
+          @unlink($filepath);
+        }
+        catch (RequestException $exception) {
+          \Drupal::logger('filefield_source_assetbank')->critical($exception->getMessage());
+        }
+      }
+      else {
+        $message = 'The temp directory is not writable, not set, or you don\'t have permissions.';
+        \Drupal::logger('filefield_sources_assetbank')->log(E_NOTICE, $message);
+        \Drupal::messenger()->addError($message);
+      }
+
+    }
 
   }
 
@@ -45,15 +97,17 @@ class Assetbank implements FilefieldSourceInterface {
 
     if (!empty($assetbank_host)) {
       $element['filefield_assetbank']['assetbank_url'] = [
-        '#type' => 'textfield',
+        '#type' => 'hidden',
         '#description' => t('Assetbank image selection process.'),
-        '#disabled' => TRUE,
+//        '#disabled' => TRUE,
         '#attributes' => [
           'id' => 'assetbank_url',
         ],
+        '#default_value' => 'http://sparta.uwaterloo.ca/cms/Images/Engineering_5_1_19.jpg',
       ];
 
       $element['filefield_assetbank']['submit'] = [
+        '#name' => implode('_', $element['#parents']) . '_submit',
         '#type' => 'button',
         '#value' => t('Select'),
         '#attached' => [
@@ -80,11 +134,11 @@ class Assetbank implements FilefieldSourceInterface {
           'filefield_sources_field_submit',
         ],
         '#limit_validation_errors' => [$element['#parents']],
-        '#states' => [
-          'visible' => [
-            ':input[name="assetbank_url"]' => ['empty' => FALSE],
-          ],
-        ],
+//        '#states' => [
+//          'enabled' => [
+//            ':input[id="assetbank_url"]' => ['filled' => TRUE],
+//          ],
+//        ],
       ];
     }
     else {
@@ -106,18 +160,22 @@ class Assetbank implements FilefieldSourceInterface {
   /** {@inheritDoc} */
   public static function element($variables) {
     // Static call for Drupal service, can't use create/__construct.
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = \Drupal::service('renderer');
     $element = $variables['element'];
+    $output = '';
 
     if (!empty($element['submit'])) {
-      $element['assetbank_url']['#field_prefix'] = $renderer->render($element['submit']);
+      $output .= $renderer->render($element['submit']);
     }
 
     if (!empty($element['transfer'])) {
-      $element['assetbank_url']['#field_suffix'] = $renderer->render($element['transfer']);
+      $output .= $renderer->render($element['transfer']);
     }
 
-    return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['assetbank_url']) . '</div>';
+    $output .= $renderer->render($element['assetbank_url']);
+
+    return '<div class="filefield-source filefield-source-assetbank clear-block">' . $output . '</div>';
   }
 
 }
