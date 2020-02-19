@@ -4,9 +4,3 @@
  * Contains filefield_sources_assetbank.module
  */
 
-use Drupal\Core\Form\FormStateInterface;
-
-function filefield_sources_assetbank_field_submit(&$form, FormStateInterface $form_state) {
-
-  $dev = 'stop';
-}

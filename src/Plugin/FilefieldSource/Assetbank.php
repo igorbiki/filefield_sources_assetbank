@@ -23,42 +23,10 @@ use Drupal\filefield_sources\FilefieldSourceInterface;
  * )
  */
 class Assetbank implements FilefieldSourceInterface {
-//
-//  /** @var \Drupal\Core\Messenger\MessengerInterface  */
-//  protected $messenger;
-//
-//  /** @var \Drupal\Core\Render\RendererInterface  */
-//  protected $renderer;
-//
-//  /**
-//   * UWAssetbank constructor.
-//   *
-//   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-//   *   Messenger interface for posting messages.
-//   * @param \Drupal\Core\Render\RendererInterface $renderer
-//   *   Renderer interface for rendering fields.
-//   */
-//  public function __construct(MessengerInterface $messenger, RendererInterface $renderer) {
-//    $this->messenger = $messenger;
-//    $this->renderer = $renderer;
-//  }
-//
-//  /**
-//   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-//   *
-//   * @return static
-//   */
-//  public static function create(ContainerInterface $container) {
-//    return new static(
-//      $container->get('messenger'),
-//      $container->get('renderer')
-//    );
-//  }
-
   /** {@inheritDoc} */
   public static function value(array &$element, &$input, FormStateInterface $form_state) {
-
     $dev = 'stop';
+
   }
 
   /** {@inheritDoc} */
@@ -86,15 +54,8 @@ class Assetbank implements FilefieldSourceInterface {
       ];
 
       $element['filefield_assetbank']['submit'] = [
-        '#name' => implode('_', $element['#parents']) . '_transfer',
         '#type' => 'button',
-        '#value' => t('Browse'),
-        '#validate' => [],
-        '#submit' => [
-          'filefield_sources_assetbank_field_submit',
-          'filefield_sources_field_submit',
-        ],
-        '#limit_validation_errors' => [$element['#parents']],
+        '#value' => t('Select'),
         '#attached' => [
           'library' => [
             'filefield_sources_assetbank/assetbank-global',
@@ -107,6 +68,22 @@ class Assetbank implements FilefieldSourceInterface {
         ],
         '#attributes' => [
           'class' => ['assetbank-selection']
+        ],
+      ];
+
+      $element['filefield_assetbank']['transfer'] = [
+        '#name' => implode('_', $element['#parents']) . '_transfer',
+        '#type' => 'button',
+        '#value' => t('Fetch'),
+        '#validate' => [],
+        '#submit' => [
+          'filefield_sources_field_submit',
+        ],
+        '#limit_validation_errors' => [$element['#parents']],
+        '#states' => [
+          'visible' => [
+            ':input[name="assetbank_url"]' => ['empty' => FALSE],
+          ],
         ],
       ];
     }
@@ -133,7 +110,11 @@ class Assetbank implements FilefieldSourceInterface {
     $element = $variables['element'];
 
     if (!empty($element['submit'])) {
-      $element['assetbank_url']['#field_suffix'] = $renderer->render($element['submit']);
+      $element['assetbank_url']['#field_prefix'] = $renderer->render($element['submit']);
+    }
+
+    if (!empty($element['transfer'])) {
+      $element['assetbank_url']['#field_suffix'] = $renderer->render($element['transfer']);
     }
 
     return '<div class="filefield-source filefield-source-assetbank clear-block">' . $renderer->render($element['assetbank_url']) . '</div>';
