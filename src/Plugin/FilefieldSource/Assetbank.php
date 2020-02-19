@@ -45,14 +45,7 @@ class Assetbank implements FilefieldSourceInterface {
 
             /** @var \Drupal\Core\File\FileSystem $filesystem */
             $filesystem = \Drupal::service('file_system');
-            $filename = rawurldecode($filesystem->basename($url));
-
-            $field = \Drupal::entityTypeManager()
-              ->getStorage('field_config')
-              ->load($element['#entity_type'] . '.' . $element['#bundle'] . '.' . $element['#field_name']);
-
-            $filename = filefield_sources_clean_filename($filename,
-            $field->getSetting('file_extensions'));
+            $filename = static::validateAll($element, rawurldecode($filesystem->basename($url)), $request->getHeaders(), $form_state);
 
             $filepath = \Drupal::service('file_system')
               ->createFilename($filename, $temp_folder);
@@ -183,4 +176,39 @@ class Assetbank implements FilefieldSourceInterface {
     return '<div class="filefield-source filefield-source-assetbank clear-block">' . $output . '</div>';
   }
 
+  /**
+   *  Validate extension and file size.
+   */
+  private static function validateAll(array $element, string $filename, array $headers, FormStateInterface &$form_state) {
+    $dev = 'stop';
+
+    $field = \Drupal::entityTypeManager()
+      ->getStorage('field_config')
+      ->load($element['#entity_type'] . '.' . $element['#bundle'] . '.' . $element['#field_name']);
+
+    $filename = filefield_sources_clean_filename($filename, $field->getSetting('file_extensions'));
+    $pathinfo = pathinfo($filename);
+
+    if (empty($pathinfo['extension'])) {
+      $form_state->setError($element, t('The URL must be a file and have an extension.'));
+    }
+
+    $extensions = $field->getSetting('file_extensions');
+    $regex = '/\.(' . preg_replace('/[ +]/', '|', preg_quote($extensions)) . ')$/i';
+
+    if (!empty($extensions) && !preg_match($regex, $filename)) {
+      $form_state->setError($element, t('Only files with the following extensions are allowed: %files-allowed.', ['%files-allowed' => $extensions]));
+    }
+
+    // Check file size based off of header information.
+    if (!empty($element['#upload_validators']['file_validate_size'][0])) {
+      $max_size = $element['#upload_validators']['file_validate_size'][0];
+      $file_size = $headers['Content-Length'];
+      if (is_array($file_size) && !empty($file_size[0]) && $file_size[0] > $max_size) {
+        $form_state->setError($element, t('The remote file is %filesize exceeding the maximum file size of %maxsize.', ['%filesize' => format_size($file_size), '%maxsize' => format_size($max_size)]));
+      }
+    }
+
+    return $filename;
+  }
 }
