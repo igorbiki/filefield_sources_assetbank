@@ -52,11 +52,9 @@ class AssetbankConfigurationForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
-    $config = \Drupal::service('config.factory')->getEditable('filefield_sources_assetbank.settings');
+    $config = $this->configFactory->getEditable('filefield_sources_assetbank.settings');
 
-    $config->set('assetbank_url', $values['assetbank_url'])
-      ->set('assetbank_upload_location', $values['assetbank_upload_location'])
-      ->save();
+    $config->set('assetbank_url', $values['assetbank_url'])->save();
 
     parent::submitForm($form, $form_state);
   }
