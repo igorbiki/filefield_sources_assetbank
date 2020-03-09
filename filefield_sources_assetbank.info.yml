@@ -1,6 +1,6 @@
-name: 'File field sources - Assetbank'
+name: 'File field sources - Asset Bank'
 type: module
-description: 'Assetbank integration for filefield sources'
+description: 'Asset Bank integration for filefield sources'
 core: 8.x
 package: 'Fields'
 core_version_requirement: ^8 || ^9

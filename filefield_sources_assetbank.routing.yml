@@ -10,6 +10,6 @@ filefield_sources_assetbank.settings:
   path: '/admin/config/media/assetbank'
   defaults:
     _form: '\Drupal\filefield_sources_assetbank\Form\AssetbankConfigurationForm'
-    _title: 'Assetbank'
+    _title: 'Asset Bank'
   requirements:
     _permission: 'administer site configuration'

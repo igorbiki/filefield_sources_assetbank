@@ -1,5 +1,5 @@
 /**
- * @file FileField Sources Assetbank js.
+ * @file FileField Sources Asset Bank js.
  */
 
 (function ($, Drupal, drupalSettings) {

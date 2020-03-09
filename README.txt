@@ -1,12 +1,12 @@
 ---------------------------
-FileField Sources Assetbank
+FileField Sources Asset Bank
 ---------------------------
 
 Description
 ---------------------------
-FileField Sources Assetbank is a module that extends FileField Sources module
-to allow Assetbank image integration in Drupal. Make sure to enable the module
-and to configure image filed to use Assetbank integration.
+FileField Sources Asset Bank is a module that extends FileField Sources module
+to allow Asset Bank image integration in Drupal. Make sure to enable the module
+and to configure image filed to use Asset Bank integration.
 
 Requirements
 ---------------------------

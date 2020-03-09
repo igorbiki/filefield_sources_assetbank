@@ -18,9 +18,9 @@ use GuzzleHttp\Exception\RequestException;
  *
  * @FilefieldSource(
  *   id = "assetbank",
- *   name = @Translation("Assetbank file source"),
- *   label = @Translation("Assetbank"),
- *   description = @Translation("Select a file using Assetbank media."),
+ *   name = @Translation("Asset Bank file source"),
+ *   label = @Translation("Asset Bank"),
+ *   description = @Translation("Select a file using Asset Bank media."),
  *   weight = 10
  * )
  */
@@ -102,7 +102,7 @@ class Assetbank implements FilefieldSourceInterface {
 
       $element['filefield_assetbank']['assetbank_url_public'] = [
         '#type' => 'textfield',
-        '#description' => t('Assetbank image selection process.'),
+        '#description' => t('Asset Bank image selection process.'),
         '#disabled' => TRUE,
         '#attributes' => [
           'id' => 'assetbank_url_public',
@@ -146,7 +146,7 @@ class Assetbank implements FilefieldSourceInterface {
       );
 
       $element['filefield_assetbank']['assetbank_url'] = [
-        '#markup' => t('Configuration for assetbank missing. Please @conf it before using this feature.', [
+        '#markup' => t('Configuration for Asset Bank missing. Please @conf it before using this feature.', [
           '@conf' => $url->toString(),
         ]),
       ];

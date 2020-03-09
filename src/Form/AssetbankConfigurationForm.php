@@ -40,7 +40,7 @@ class AssetbankConfigurationForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Asset Bank URL'),
       '#default_value' => $config->get('assetbank_url'),
-      '#description' => $this->t('Path to assetbank, use format http(s)://{host}/action/selectImageForCms'),
+      '#description' => $this->t('Path to Asset Bank, use format http(s)://{host}/action/selectImageForCms'),
       '#size' => 100,
     );
 
